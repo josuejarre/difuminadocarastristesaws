@@ -20,14 +20,26 @@ rekognition_client = boto3.Session(
     aws_secret_access_key=secretKey,
     region_name=region).client('rekognition')
 
-def detect_faces(img):
+def looking_faces(keys):
     # Assign parameters and call the service
     try:
-        response = rekognition_client.detect_faces(
-            Image={'S3Object': {'Bucket': bucket, 'Name': img}}, Attributes=['ALL'])
+        response = rekognition_client.compare_faces(
+    SourceImage={
+        'S3Object': {
+            'Bucket': bucket,
+            'Name': keys[0]
+        }
+    },
+    TargetImage={
+        'S3Object': {
+            'Bucket': bucket,
+            'Name': keys[1]
+        }
+    },
+    SimilarityThreshold=90
+    )
 
-        print("Image task recognition has been successfully run")
     except:
-        raise Exception("An unexpected error was raised recognizing an image")
+        raise Exception("Un error inexperado ha ocurrido al intentar comparar las imagenes")
 
     return response
